@@ -3,8 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
+use App\Support\LandingTutorialPreviewPath;
 use App\Support\YoutubeIdParser;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -14,6 +16,7 @@ use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Storage;
 
 class LandingVideoSettings extends Page implements HasForms
 {
@@ -34,10 +37,12 @@ class LandingVideoSettings extends Page implements HasForms
     public function mount(): void
     {
         $id = Setting::get('landing_tutorial_youtube_id', 'JPce5ZED8RY') ?? 'JPce5ZED8RY';
+        $previewPath = LandingTutorialPreviewPath::normalize(Setting::get('landing_tutorial_preview_path'));
 
         $this->form->fill([
             'youtube_url_or_id' => "https://youtu.be/{$id}",
             'duration_caption' => Setting::get('landing_tutorial_duration_caption', '1:37') ?? '1:37',
+            'preview_image' => $previewPath,
         ]);
     }
 
@@ -63,6 +68,18 @@ class LandingVideoSettings extends Page implements HasForms
                         ->placeholder('1:37')
                         ->helperText('Short text shown next to “Watch on YouTube” (e.g. video length).')
                         ->maxLength(32)
+                        ->columnSpanFull(),
+                    FileUpload::make('preview_image')
+                        ->label('Custom preview image')
+                        ->disk('public')
+                        ->directory(LandingTutorialPreviewPath::DIRECTORY)
+                        ->visibility('public')
+                        ->image()
+                        ->maxSize(3072)
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                        ->imagePreviewHeight('200')
+                        ->helperText('Optional. If empty, the YouTube thumbnail is used. JPG, PNG or WebP, max 3 MB.')
+                        ->nullable()
                         ->columnSpanFull(),
                 ]),
             ])
@@ -102,6 +119,24 @@ class LandingVideoSettings extends Page implements HasForms
 
         Setting::set('landing_tutorial_youtube_id', $videoId);
         Setting::set('landing_tutorial_duration_caption', $caption);
+
+        $previousPreviewPath = LandingTutorialPreviewPath::normalize(Setting::get('landing_tutorial_preview_path'));
+        $incomingPreview = $data['preview_image'] ?? null;
+        $incomingPreview = is_string($incomingPreview) && $incomingPreview !== ''
+            ? LandingTutorialPreviewPath::normalize($incomingPreview)
+            : null;
+
+        if ($incomingPreview === null) {
+            if ($previousPreviewPath !== null) {
+                Storage::disk('public')->delete($previousPreviewPath);
+            }
+            Setting::set('landing_tutorial_preview_path', null);
+        } else {
+            if ($previousPreviewPath !== null && $previousPreviewPath !== $incomingPreview) {
+                Storage::disk('public')->delete($previousPreviewPath);
+            }
+            Setting::set('landing_tutorial_preview_path', $incomingPreview);
+        }
 
         Notification::make()
             ->title('Tutorial video saved')

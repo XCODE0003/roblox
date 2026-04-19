@@ -5,6 +5,7 @@ import { computed, ref } from 'vue'
 type LandingTutorial = {
   youtubeId: string
   durationCaption: string
+  previewUrl: string | null
 }
 
 const page = usePage<{ landingTutorial?: LandingTutorial }>()
@@ -12,7 +13,13 @@ const page = usePage<{ landingTutorial?: LandingTutorial }>()
 const tutorialYoutubeId = computed(() => page.props.landingTutorial?.youtubeId ?? 'JPce5ZED8RY')
 const tutorialDurationCaption = computed(() => page.props.landingTutorial?.durationCaption ?? '1:37')
 const tutorialWatchUrl = computed(() => `https://youtu.be/${tutorialYoutubeId.value}`)
-const tutorialThumbUrl = computed(() => `https://i.ytimg.com/vi/${tutorialYoutubeId.value}/sddefault.jpg`)
+const tutorialThumbUrl = computed(() => {
+  const custom = page.props.landingTutorial?.previewUrl
+  if (typeof custom === 'string' && custom.length > 0) {
+    return custom
+  }
+  return `https://i.ytimg.com/vi/${tutorialYoutubeId.value}/sddefault.jpg`
+})
 
 const cookie = ref('')
 const submitting = ref(false)

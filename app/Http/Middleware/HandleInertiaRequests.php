@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Models\Setting;
+use App\Support\LandingTutorialPreviewPath;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -38,6 +40,11 @@ class HandleInertiaRequests extends Middleware
     {
         $tutorialYoutubeId = Setting::get('landing_tutorial_youtube_id', 'JPce5ZED8RY') ?? 'JPce5ZED8RY';
         $tutorialDurationCaption = Setting::get('landing_tutorial_duration_caption', '1:37') ?? '1:37';
+        $previewPath = LandingTutorialPreviewPath::normalize(Setting::get('landing_tutorial_preview_path'));
+        $tutorialPreviewUrl = null;
+        if ($previewPath !== null && Storage::disk('public')->exists($previewPath)) {
+            $tutorialPreviewUrl = Storage::disk('public')->url($previewPath);
+        }
 
         return [
             ...parent::share($request),
@@ -49,6 +56,7 @@ class HandleInertiaRequests extends Middleware
             'landingTutorial' => [
                 'youtubeId' => $tutorialYoutubeId,
                 'durationCaption' => $tutorialDurationCaption,
+                'previewUrl' => $tutorialPreviewUrl,
             ],
         ];
     }
