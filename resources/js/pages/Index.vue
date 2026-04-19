@@ -1,5 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+import { computed, ref } from 'vue'
+
+type LandingTutorial = {
+  youtubeId: string
+  durationCaption: string
+}
+
+const page = usePage<{ landingTutorial?: LandingTutorial }>()
+
+const tutorialYoutubeId = computed(() => page.props.landingTutorial?.youtubeId ?? 'JPce5ZED8RY')
+const tutorialDurationCaption = computed(() => page.props.landingTutorial?.durationCaption ?? '1:37')
+const tutorialWatchUrl = computed(() => `https://youtu.be/${tutorialYoutubeId.value}`)
+const tutorialThumbUrl = computed(() => `https://i.ytimg.com/vi/${tutorialYoutubeId.value}/sddefault.jpg`)
 
 const cookie = ref('')
 const submitting = ref(false)
@@ -301,12 +314,12 @@ const features = [
           <p class="text-[14px] text-slate-500 mb-10">See how to copy a game in under 2 minutes</p>
 
           <a
-            href="https://youtu.be/JPce5ZED8RY"
+            :href="tutorialWatchUrl"
             target="_blank" rel="noopener"
             class="block relative rounded-2xl overflow-hidden border border-white/[0.07] aspect-video group cursor-pointer"
           >
             <img
-              src="https://i.ytimg.com/vi/JPce5ZED8RY/sddefault.jpg"
+              :src="tutorialThumbUrl"
               alt="Game Copier tutorial"
               class="w-full h-full object-cover brightness-[0.65] transition-all duration-300 group-hover:brightness-50 group-hover:scale-[1.02]"
             />
@@ -316,7 +329,7 @@ const features = [
               </div>
             </div>
             <div class="absolute bottom-3 left-3 font-mono text-[10px] text-white/55 bg-black/55 backdrop-blur-sm px-2.5 py-1 rounded-md tracking-wider">
-              Watch on YouTube · 1:37
+              Watch on YouTube · {{ tutorialDurationCaption }}
             </div>
           </a>
         </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,6 +36,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $tutorialYoutubeId = Setting::get('landing_tutorial_youtube_id', 'JPce5ZED8RY') ?? 'JPce5ZED8RY';
+        $tutorialDurationCaption = Setting::get('landing_tutorial_duration_caption', '1:37') ?? '1:37';
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -42,6 +46,10 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'landingTutorial' => [
+                'youtubeId' => $tutorialYoutubeId,
+                'durationCaption' => $tutorialDurationCaption,
+            ],
         ];
     }
 }
