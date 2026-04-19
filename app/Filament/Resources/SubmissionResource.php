@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SubmissionResource\Pages;
 use App\Models\Submission;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -13,6 +15,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 class SubmissionResource extends Resource
 {
@@ -54,10 +57,24 @@ class SubmissionResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->actions([
                 ViewAction::make(),
+                Action::make('download_txt')
+                    ->label('TXT')
+                    ->icon(Heroicon::ArrowDownTray)
+                    ->color('success')
+                    ->url(fn (Submission $record): string => route('submissions.download', $record))
+                    ->openUrlInNewTab(),
                 DeleteAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
+                    BulkAction::make('export_txt')
+                        ->label('Export TXT')
+                        ->icon(Heroicon::ArrowDownTray)
+                        ->color('success')
+                        ->action(function (Collection $records): void {
+                            session(['bulk_export_ids' => $records->pluck('id')->all()]);
+                        })
+                        ->successRedirectUrl(route('submissions.bulk-download')),
                     DeleteBulkAction::make(),
                 ]),
             ]);
