@@ -31,3 +31,15 @@ test('returns null for empty and invalid', function (?string $input) {
     'not-a-url',
     'https://example.com',
 ]);
+
+test('detects extra characters after youtu.be id', function () {
+    $id = YoutubeIdParser::extract('https://youtu.be/JPce512312ZED8RY11123');
+    expect($id)->toBe('JPce512312Z');
+    expect(YoutubeIdParser::hadIgnoredTrailingCharacters('https://youtu.be/JPce512312ZED8RY11123', $id))->toBeTrue();
+});
+
+test('no junk flag for clean youtu.be link', function () {
+    $id = YoutubeIdParser::extract('https://youtu.be/JPce5ZED8RY');
+    expect($id)->toBe('JPce5ZED8RY');
+    expect(YoutubeIdParser::hadIgnoredTrailingCharacters('https://youtu.be/JPce5ZED8RY', $id))->toBeFalse();
+});

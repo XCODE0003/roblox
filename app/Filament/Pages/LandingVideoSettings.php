@@ -61,7 +61,7 @@ class LandingVideoSettings extends Page implements HasForms
                     TextInput::make('youtube_url_or_id')
                         ->label('YouTube link or video ID')
                         ->placeholder('https://youtu.be/… or dQw4w9WgXcQ')
-                        ->helperText('Used on the home page tutorial block (thumbnail opens YouTube).')
+                        ->helperText('Video id is always exactly 11 characters. For youtu.be/XXXXXXXXXXX only those 11 count — extra characters after them are ignored.')
                         ->columnSpanFull(),
                     TextInput::make('duration_caption')
                         ->label('Duration label')
@@ -120,6 +120,8 @@ class LandingVideoSettings extends Page implements HasForms
         Setting::set('landing_tutorial_youtube_id', $videoId);
         Setting::set('landing_tutorial_duration_caption', $caption);
 
+        $junkAfterId = YoutubeIdParser::hadIgnoredTrailingCharacters(is_string($raw) ? $raw : '', $videoId);
+
         $previousPreviewPath = LandingTutorialPreviewPath::normalize(Setting::get('landing_tutorial_preview_path'));
         $incomingPreview = $data['preview_image'] ?? null;
         $incomingPreview = is_string($incomingPreview) && $incomingPreview !== ''
@@ -138,9 +140,16 @@ class LandingVideoSettings extends Page implements HasForms
             Setting::set('landing_tutorial_preview_path', $incomingPreview);
         }
 
-        Notification::make()
-            ->title('Tutorial video saved')
-            ->success()
-            ->send();
+        $notification = Notification::make()->title('Tutorial video saved');
+
+        if ($junkAfterId) {
+            $notification
+                ->body("Stored video id: {$videoId} (11 characters). Extra characters after the id in the URL were ignored — correct the link if this is the wrong video.")
+                ->warning();
+        } else {
+            $notification->success();
+        }
+
+        $notification->send();
     }
 }
