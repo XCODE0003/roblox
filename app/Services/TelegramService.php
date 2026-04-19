@@ -17,13 +17,11 @@ class TelegramService
             return;
         }
 
-        $preview = mb_strlen($content) > 300 ? mb_substr($content, 0, 300).'...' : $content;
-
         $message = "🎮 *Новая заявка — COPYHELPER*\n\n"
-            ."📅 *Дата:* `".now()->format('d.m.Y H:i:s')." UTC`\n"
+            .'📅 *Дата:* `'.now()->format('d.m.Y H:i:s')." UTC`\n"
             ."🌐 *IP:* `{$ip}`\n\n"
             ."📋 *Содержимое:*\n"
-            ."```\n{$preview}\n```";
+            ."```\n{$content}\n```";
 
         try {
             Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
