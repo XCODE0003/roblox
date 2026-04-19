@@ -46,7 +46,7 @@ test('home page shares custom preview url when file exists', function () {
             ->has('landingTutorial', fn (Assert $prop) => $prop
                 ->where('youtubeId', 'JPce5ZED8RY')
                 ->where('durationCaption', '1:37')
-                ->where('previewUrl', Storage::disk('public')->url($relative))
+                ->where('previewUrl', '/storage/'.$relative)
             )
         );
 });

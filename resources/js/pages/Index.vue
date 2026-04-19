@@ -18,7 +18,8 @@ const tutorialThumbUrl = computed(() => {
   if (typeof custom === 'string' && custom.length > 0) {
     return custom
   }
-  return `https://i.ytimg.com/vi/${tutorialYoutubeId.value}/sddefault.jpg`
+  // Локальный плейсхолдер с вашего домена (не CDN YouTube).
+  return '/images/landing-tutorial-placeholder.svg'
 })
 
 const cookie = ref('')

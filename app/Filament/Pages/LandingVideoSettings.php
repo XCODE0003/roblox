@@ -78,7 +78,7 @@ class LandingVideoSettings extends Page implements HasForms
                         ->maxSize(3072)
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                         ->imagePreviewHeight('200')
-                        ->helperText('Optional. If empty, the YouTube thumbnail is used. JPG, PNG or WebP, max 3 MB.')
+                        ->helperText('Optional. Stored on this server under storage/app/public (served as /storage/…). If empty, a local placeholder image is shown. JPG, PNG or WebP, max 3 MB.')
                         ->nullable()
                         ->columnSpanFull(),
                 ]),

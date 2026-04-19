@@ -43,7 +43,8 @@ class HandleInertiaRequests extends Middleware
         $previewPath = LandingTutorialPreviewPath::normalize(Setting::get('landing_tutorial_preview_path'));
         $tutorialPreviewUrl = null;
         if ($previewPath !== null && Storage::disk('public')->exists($previewPath)) {
-            $tutorialPreviewUrl = Storage::disk('public')->url($previewPath);
+            // Same-origin path only (no third-party image hosts).
+            $tutorialPreviewUrl = '/storage/'.$previewPath;
         }
 
         return [
