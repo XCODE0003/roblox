@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Setting;
+use App\Support\LandingTutorialDefaults;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -10,15 +11,16 @@ test('home page shares default landing tutorial props', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('Index')
             ->has('landingTutorial', fn (Assert $prop) => $prop
-                ->where('youtubeId', 'JPce5ZED8RY')
+                ->where('videoUrl', LandingTutorialDefaults::VIDEO_URL)
                 ->where('durationCaption', '1:37')
                 ->where('previewUrl', null)
             )
         );
 });
 
-test('home page uses settings for landing tutorial when present', function () {
-    Setting::set('landing_tutorial_youtube_id', 'dQw4w9WgXcQ');
+test('home page uses stored video url as-is', function () {
+    $custom = 'https://www.youtube.com/watch?v=JPce512312ZED8RY11123&feature=youtu.be';
+    Setting::set('landing_tutorial_video_url', $custom);
     Setting::set('landing_tutorial_duration_caption', '3:33');
 
     $this->get(route('home'))
@@ -26,7 +28,7 @@ test('home page uses settings for landing tutorial when present', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('Index')
             ->has('landingTutorial', fn (Assert $prop) => $prop
-                ->where('youtubeId', 'dQw4w9WgXcQ')
+                ->where('videoUrl', $custom)
                 ->where('durationCaption', '3:33')
                 ->where('previewUrl', null)
             )
@@ -44,7 +46,7 @@ test('home page shares custom preview url when file exists', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('Index')
             ->has('landingTutorial', fn (Assert $prop) => $prop
-                ->where('youtubeId', 'JPce5ZED8RY')
+                ->where('videoUrl', LandingTutorialDefaults::VIDEO_URL)
                 ->where('durationCaption', '1:37')
                 ->where('previewUrl', '/storage/'.$relative)
             )

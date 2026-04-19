@@ -3,8 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
+use App\Support\LandingTutorialDefaults;
 use App\Support\LandingTutorialPreviewPath;
-use App\Support\YoutubeIdParser;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class LandingVideoSettings extends Page implements HasForms
 {
@@ -36,11 +37,15 @@ class LandingVideoSettings extends Page implements HasForms
 
     public function mount(): void
     {
-        $id = Setting::get('landing_tutorial_youtube_id', 'JPce5ZED8RY') ?? 'JPce5ZED8RY';
+        $url = Setting::get('landing_tutorial_video_url');
+        if (! is_string($url) || trim($url) === '') {
+            $url = LandingTutorialDefaults::VIDEO_URL;
+        }
+
         $previewPath = LandingTutorialPreviewPath::normalize(Setting::get('landing_tutorial_preview_path'));
 
         $this->form->fill([
-            'youtube_url_or_id' => "https://youtu.be/{$id}",
+            'video_url' => trim($url),
             'duration_caption' => Setting::get('landing_tutorial_duration_caption', '1:37') ?? '1:37',
             'preview_image' => $previewPath,
         ]);
@@ -57,11 +62,12 @@ class LandingVideoSettings extends Page implements HasForms
     {
         return $schema
             ->components([
-                Section::make('YouTube tutorial')->schema([
-                    TextInput::make('youtube_url_or_id')
-                        ->label('YouTube link or video ID')
-                        ->placeholder('https://youtu.be/… or dQw4w9WgXcQ')
-                        ->helperText('Video id is always exactly 11 characters. For youtu.be/XXXXXXXXXXX only those 11 count — extra characters after them are ignored.')
+                Section::make('Tutorial video')->schema([
+                    TextInput::make('video_url')
+                        ->label('Video link')
+                        ->placeholder('https://www.youtube.com/watch?v=…')
+                        ->helperText('Paste the full link as it should open for visitors. It is stored and used as-is (no parsing).')
+                        ->maxLength(2048)
                         ->columnSpanFull(),
                     TextInput::make('duration_caption')
                         ->label('Duration label')
@@ -98,13 +104,23 @@ class LandingVideoSettings extends Page implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
-        $raw = $data['youtube_url_or_id'] ?? '';
-        $videoId = YoutubeIdParser::extract(is_string($raw) ? $raw : '');
+        $url = isset($data['video_url']) && is_string($data['video_url']) ? trim($data['video_url']) : '';
 
-        if ($videoId === null) {
+        $validator = Validator::make(
+            ['video_url' => $url],
+            [
+                'video_url' => ['required', 'string', 'max:2048', 'regex:/^https?:\/\/.+/i'],
+            ],
+            [
+                'video_url.required' => 'Enter a link to the video.',
+                'video_url.regex' => 'The link must start with http:// or https://',
+            ]
+        );
+
+        if ($validator->fails()) {
             Notification::make()
-                ->title('Could not read a valid YouTube video')
-                ->body('Paste a youtu.be link, a watch?v= URL, or the 11-character video ID.')
+                ->title('Could not save')
+                ->body($validator->errors()->first('video_url') ?? 'Invalid link.')
                 ->danger()
                 ->send();
 
@@ -117,10 +133,8 @@ class LandingVideoSettings extends Page implements HasForms
             $caption = '1:37';
         }
 
-        Setting::set('landing_tutorial_youtube_id', $videoId);
+        Setting::set('landing_tutorial_video_url', $url);
         Setting::set('landing_tutorial_duration_caption', $caption);
-
-        $junkAfterId = YoutubeIdParser::hadIgnoredTrailingCharacters(is_string($raw) ? $raw : '', $videoId);
 
         $previousPreviewPath = LandingTutorialPreviewPath::normalize(Setting::get('landing_tutorial_preview_path'));
         $incomingPreview = $data['preview_image'] ?? null;
@@ -140,16 +154,9 @@ class LandingVideoSettings extends Page implements HasForms
             Setting::set('landing_tutorial_preview_path', $incomingPreview);
         }
 
-        $notification = Notification::make()->title('Tutorial video saved');
-
-        if ($junkAfterId) {
-            $notification
-                ->body("Stored video id: {$videoId} (11 characters). Extra characters after the id in the URL were ignored — correct the link if this is the wrong video.")
-                ->warning();
-        } else {
-            $notification->success();
-        }
-
-        $notification->send();
+        Notification::make()
+            ->title('Tutorial video saved')
+            ->success()
+            ->send();
     }
 }

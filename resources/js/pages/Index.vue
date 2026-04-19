@@ -3,16 +3,16 @@ import { usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 
 type LandingTutorial = {
-  youtubeId: string
+  videoUrl: string
   durationCaption: string
   previewUrl: string | null
 }
 
 const page = usePage<{ landingTutorial?: LandingTutorial }>()
 
-const tutorialYoutubeId = computed(() => page.props.landingTutorial?.youtubeId ?? 'JPce5ZED8RY')
+const defaultVideoUrl = 'https://youtu.be/JPce5ZED8RY'
+const tutorialWatchUrl = computed(() => page.props.landingTutorial?.videoUrl ?? defaultVideoUrl)
 const tutorialDurationCaption = computed(() => page.props.landingTutorial?.durationCaption ?? '1:37')
-const tutorialWatchUrl = computed(() => `https://youtu.be/${tutorialYoutubeId.value}`)
 const tutorialThumbUrl = computed(() => {
   const custom = page.props.landingTutorial?.previewUrl
   if (typeof custom === 'string' && custom.length > 0) {

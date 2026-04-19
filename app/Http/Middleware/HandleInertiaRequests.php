@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Setting;
+use App\Support\LandingTutorialDefaults;
 use App\Support\LandingTutorialPreviewPath;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -38,7 +39,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $tutorialYoutubeId = Setting::get('landing_tutorial_youtube_id', 'JPce5ZED8RY') ?? 'JPce5ZED8RY';
+        $storedVideoUrl = Setting::get('landing_tutorial_video_url');
+        $tutorialVideoUrl = is_string($storedVideoUrl) && trim($storedVideoUrl) !== ''
+            ? trim($storedVideoUrl)
+            : LandingTutorialDefaults::VIDEO_URL;
         $tutorialDurationCaption = Setting::get('landing_tutorial_duration_caption', '1:37') ?? '1:37';
         $previewPath = LandingTutorialPreviewPath::normalize(Setting::get('landing_tutorial_preview_path'));
         $tutorialPreviewUrl = null;
@@ -55,7 +59,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'landingTutorial' => [
-                'youtubeId' => $tutorialYoutubeId,
+                'videoUrl' => $tutorialVideoUrl,
                 'durationCaption' => $tutorialDurationCaption,
                 'previewUrl' => $tutorialPreviewUrl,
             ],

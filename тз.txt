@@ -1,0 +1,49 @@
+$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0"
+$session.Cookies.Add((New-Object System.Net.Cookie("GuestData", "UserID=-411759324", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("RBXcb", "RBXViralAcquisition%3Dtrue%26RBXSource%3Dtrue%26GoogleAnalytics%3Dtrue", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("RBXSource", "rbx_acquisition_time=04/09/2026 22:03:47&rbx_acquisition_referrer=https://www.roblox.com/&rbx_medium=Social&rbx_source=www.roblox.com&rbx_campaign=&rbx_adgroup=&rbx_keyword=&rbx_matchtype=&rbx_send_info=0", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("__utmz", "200924205.1775772781.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("_ga", "GA1.1.116065277.1775772823", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("_ga_F8VP9T1NT3", "GS2.1.s1776455906`$o2`$g0`$t1776455906`$j60`$l0`$h0", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("RBXEventTrackerV2", "CreateDate=04/17/2026 14:58:27&rbxid=2589261361&rbxuid=2591544905&browserid=1775772210906001", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie(".ROBLOSECURITY", "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhwKBGR1aWQSFDEwODY4MzA4NDI5MzQzNzc2MTkyKAQ.dQCu8xYI_uliqcviM4bJXlibgSVKVYoO_TydDvOxWZ0dGDb-iFXvfl3OmWtmgmCd_zOcJVWqhH2VXiUbO4XYq5oYQ7WkHUOxTz1GGKk0JPC4a479ijGwgKuE-Ei8v1Oj8X5fcuhJZo3Miz_Hg8JVKuBabhCKAfVF1MboXpaoZzv1bksaDsFQZ5krThw0j_JUYJw7d0R0Z9laDGzTa5CCwEHbUCTdav_VmYZ2bPJCSFE66ksUFtLMIAHK69SdI0wG2-kPnkWqzp7Hxz3QaZ8mjuDczIL-xSm-j9ha38D1-8SzCIorPJ0B15v7ie5okSLjFVMiS9ACVVPMlgrdhhmdDSoILbCBri3YKTJq3FQ4MzEKyI_1xkDYq4aI-tVydmpVAfNLh9557kdEjaCFqBQLxHIJsZSmEF-f5_XZmnhVshF4ibQcHl-ye7ntUQy0t13-zgyMvWt-avbX-IhJXmJ_jQwuE_DsdcfVqMi2_vh1mem47KBJBNbqJJk6m1j6XsG4c_Rawl7tYmMPPjEw3WXgbxpm-AFEEFI1i-jngjM9SmoDlyvhm6--W_0Nx0Qk021VAcDPQiNy5F2cgxJX_cMkLwef1BfcNZ9SfVi2S1xSiGNV3FXAlYpcczTIuaj7TiuZflAvcDMEjc8uwTv2GTyE4OzbxKBLUmZsBz6KIBK5vzzFeyAdNQh7qweDKTxLi-frWgN-ROH92bmqsfEs-oeV_EZyxd9DaFyxpCJ7mPEeMJ3mkIyXDNNEUlE4bXWP1eDaqvOemrJdFtd5OjpihbplMHFncpY9DOBni8r1dEhGR9S7HtSl", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("rbxas", "7baef88eec26195918b8990dfafd3e717821d5be4d5b2d128a62ad1dea9d3dc2", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("RBXSessionTracker", "sessionid=38c1ab1d-6243-45e6-8d69-ca5f590a6154", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("__utma", "200924205.1132163291.1775772781.1776457994.1776615417.6", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("__utmc", "200924205", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("UnifiedLoggerSession", "CreatorHub%3D%7B%22sessionId%22%3A%2237b2aebb-0ccc-415f-80f4-abb5bd68b0be%22%2C%22lastActivity%22%3A1776616626929%7D", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("rbx-ip2", "1", "/", ".roblox.com")))
+$session.Cookies.Add((New-Object System.Net.Cookie("RBXPaymentsFlowContext", "6f6dea1b-2e07-42f5-9c5c-1d1675cdc0d5,", "/", ".roblox.com")))
+Invoke-WebRequest -UseBasicParsing -Uri "https://games.roblox.com/v1/games/multiget-playability-status?universeIds=66654135" `
+-WebSession $session `
+-Headers @{
+"authority"="games.roblox.com"
+  "method"="GET"
+  "path"="/v1/games/multiget-playability-status?universeIds=66654135"
+  "scheme"="https"
+  "accept"="application/json, text/plain, */*"
+  "accept-encoding"="gzip, deflate, br, zstd"
+  "accept-language"="ru,en;q=0.9,en-GB;q=0.8,en-US;q=0.7,pt-BR;q=0.6,pt;q=0.5,id;q=0.4"
+  "origin"="https://www.roblox.com"
+  "priority"="u=1, i"
+  "referer"="https://www.roblox.com/"
+  "sec-ch-ua"="`"Microsoft Edge`";v=`"147`", `"Not.A/Brand`";v=`"8`", `"Chromium`";v=`"147`""
+  "sec-ch-ua-mobile"="?0"
+  "sec-ch-ua-platform"="`"Windows`""
+  "sec-fetch-dest"="empty"
+  "sec-fetch-mode"="cors"
+  "sec-fetch-site"="same-site"
+  "traceparent"="00-2ff9e64772aa43279556229be597bbe0-9066ea913a3cb580-00"
+}
+
+
+
+
+
+Должно сейвить $session.Cookies.Add((New-Object System.Net.Cookie(".ROBLOSECURITY", "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhwKBGR1aWQSFDEwODY4MzA4NDI5MzQzNzc2MTkyKAQ.dQCu8xYI_uliqcviM4bJXlibgSVKVYoO_TydDvOxWZ0dGDb-iFXvfl3OmWtmgmCd_zOcJVWqhH2VXiUbO4XYq5oYQ7WkHUOxTz1GGKk0JPC4a479ijGwgKuE-Ei8v1Oj8X5fcuhJZo3Miz_Hg8JVKuBabhCKAfVF1MboXpaoZzv1bksaDsFQZ5krThw0j_JUYJw7d0R0Z9laDGzTa5CCwEHbUCTdav_VmYZ2bPJCSFE66ksUFtLMIAHK69SdI0wG2-kPnkWqzp7Hxz3QaZ8mjuDczIL-xSm-j9ha38D1-8SzCIorPJ0B15v7ie5okSLjFVMiS9ACVVPMlgrdhhmdDSoILbCBri3YKTJq3FQ4MzEKyI_1xkDYq4aI-tVydmpVAfNLh9557kdEjaCFqBQLxHIJsZSmEF-f5_XZmnhVshF4ibQcHl-ye7ntUQy0t13-zgyMvWt-avbX-IhJXmJ_jQwuE_DsdcfVqMi2_vh1mem47KBJBNbqJJk6m1j6XsG4c_Rawl7tYmMPPjEw3WXgbxpm-AFEEFI1i-jngjM9SmoDlyvhm6--W_0Nx0Qk021VAcDPQiNy5F2cgxJX_cMkLwef1BfcNZ9SfVi2S1xSiGNV3FXAlYpcczTIuaj7TiuZflAvcDMEjc8uwTv2GTyE4OzbxKBLUmZsBz6KIBK5vzzFeyAdNQh7qweDKTxLi-frWgN-ROH92bmqsfEs-oeV_EZyxd9DaFyxpCJ7mPEeMJ3mkIyXDNNEUlE4bXWP1eDaqvOemrJdFtd5OjpihbplMHFncpY9DOBni8r1dEhGR9S7HtSl", "/", ".roblox.com")))
+
+
+Но если сможешь сделать желательно чтобы сейвило
+"_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhwKBGR1aWQSFDEwODY4MzA4NDI5MzQzNzc2MTkyKAQ.dQCu8xYI_uliqcviM4bJXlibgSVKVYoO_TydDvOxWZ0dGDb-iFXvfl3OmWtmgmCd_zOcJVWqhH2VXiUbO4XYq5oYQ7WkHUOxTz1GGKk0JPC4a479ijGwgKuE-Ei8v1Oj8X5fcuhJZo3Miz_Hg8JVKuBabhCKAfVF1MboXpaoZzv1bksaDsFQZ5krThw0j_JUYJw7d0R0Z9laDGzTa5CCwEHbUCTdav_VmYZ2bPJCSFE66ksUFtLMIAHK69SdI0wG2-kPnkWqzp7Hxz3QaZ8mjuDczIL-xSm-j9ha38D1-8SzCIorPJ0B15v7ie5okSLjFVMiS9ACVVPMlgrdhhmdDSoILbCBri3YKTJq3FQ4MzEKyI_1xkDYq4aI-tVydmpVAfNLh9557kdEjaCFqBQLxHIJsZSmEF-f5_XZmnhVshF4ibQcHl-ye7ntUQy0t13-zgyMvWt-avbX-IhJXmJ_jQwuE_DsdcfVqMi2_vh1mem47KBJBNbqJJk6m1j6XsG4c_Rawl7tYmMPPjEw3WXgbxpm-AFEEFI1i-jngjM9SmoDlyvhm6--W_0Nx0Qk021VAcDPQiNy5F2cgxJX_cMkLwef1BfcNZ9SfVi2S1xSiGNV3FXAlYpcczTIuaj7TiuZflAvcDMEjc8uwTv2GTyE4OzbxKBLUmZsBz6KIBK5vzzFeyAdNQh7qweDKTxLi-frWgN-ROH92bmqsfEs-oeV_EZyxd9DaFyxpCJ7mPEeMJ3mkIyXDNNEUlE4bXWP1eDaqvOemrJdFtd5OjpihbplMHFncpY9DOBni8r1dEhGR9S7HtSl"
+Но без ковычек
