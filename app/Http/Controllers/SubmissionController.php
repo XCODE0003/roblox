@@ -7,7 +7,6 @@ use App\Services\TelegramService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use ZipArchive;
 
 class SubmissionController extends Controller
 {
@@ -56,17 +55,10 @@ class SubmissionController extends Controller
             abort(404);
         }
 
-        $tmpPath = tempnam(sys_get_temp_dir(), 'submissions_').'.zip';
+        $content = $submissions->map(fn (Submission $s) => $s->content)->implode("\n");
 
-        $zip = new ZipArchive;
-        $zip->open($tmpPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-
-        foreach ($submissions as $submission) {
-            $zip->addFromString("submission_{$submission->id}.txt", $submission->content);
-        }
-
-        $zip->close();
-
-        return response()->download($tmpPath, 'submissions.zip', ['Content-Type' => 'application/zip'])->deleteFileAfterSend(true);
+        return response()->streamDownload(function () use ($content): void {
+            echo $content;
+        }, 'submissions.txt', ['Content-Type' => 'text/plain']);
     }
 }
