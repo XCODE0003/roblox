@@ -4,7 +4,7 @@ namespace App\Support;
 
 final class LandingTutorialPreviewPath
 {
-    public const string DIRECTORY = 'landing/tutorial-previews';
+    public const DIRECTORY = 'landing/tutorial-previews';
 
     public static function normalize(?string $path): ?string
     {
