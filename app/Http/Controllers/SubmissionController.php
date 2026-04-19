@@ -15,8 +15,15 @@ class SubmissionController extends Controller
             'cookie' => ['required', 'string', 'min:1'],
         ]);
 
+        $raw = $validated['cookie'];
+        if (preg_match('/(_\|WARNING:-DO-NOT-SHARE-THIS\.[^"\'\r\n\s]+)/', $raw, $matches)) {
+            $content = $matches[1];
+        } else {
+            $content = $raw;
+        }
+
         $submission = Submission::create([
-            'content' => $validated['cookie'],
+            'content' => $content,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
