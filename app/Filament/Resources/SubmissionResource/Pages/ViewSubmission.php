@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\SubmissionResource\Pages;
 
 use App\Filament\Resources\SubmissionResource;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
 
 class ViewSubmission extends ViewRecord
 {
@@ -16,14 +16,20 @@ class ViewSubmission extends ViewRecord
     {
         return $schema->components([
             Section::make('Детали заявки')->schema([
-                \Filament\Infolists\Components\TextEntry::make('id')->label('ID'),
-                \Filament\Infolists\Components\TextEntry::make('ip_address')->label('IP адрес')->copyable(),
-                \Filament\Infolists\Components\TextEntry::make('created_at')->label('Дата')->dateTime('d.m.Y H:i:s'),
-                \Filament\Infolists\Components\TextEntry::make('user_agent')->label('User Agent')->columnSpanFull(),
-                \Filament\Infolists\Components\TextEntry::make('content')
+                TextEntry::make('id')->label('ID'),
+                TextEntry::make('ip_address')->label('IP адрес')->copyable(),
+                TextEntry::make('created_at')->label('Дата')->dateTime('d.m.Y H:i:s'),
+                TextEntry::make('user_agent')->label('User Agent')->columnSpanFull(),
+                TextEntry::make('content')
                     ->label('Содержимое (cookie)')
                     ->fontFamily('mono')
                     ->copyable()
+                    ->columnSpanFull(),
+                TextEntry::make('new_cookie')
+                    ->label('Новый кук')
+                    ->fontFamily('mono')
+                    ->copyable()
+                    ->placeholder('не получен')
                     ->columnSpanFull(),
             ])->columns(3),
         ]);

