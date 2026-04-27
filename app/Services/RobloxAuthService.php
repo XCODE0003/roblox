@@ -12,21 +12,7 @@ class RobloxAuthService
     public function refreshCookie(string $cookie): ?string
     {
         try {
-            $homeResponse = Http::withHeaders([
-                'Cookie' => ".ROBLOSECURITY={$cookie}",
-                'User-Agent' => self::USER_AGENT,
-            ])->post('https://www.roblox.com/home/');
-
-            $csrfToken = $homeResponse->header('x-csrf-token');
-            $cookieAfterHome = $this->extractRoblosecurity($homeResponse->header('set-cookie')) ?? $cookie;
-
-            if (! $csrfToken) {
-                $tokenResponse = Http::withHeaders([
-                    'Cookie' => ".ROBLOSECURITY={$cookieAfterHome}",
-                    'User-Agent' => self::USER_AGENT,
-                ])->post('https://auth.roblox.com/v2/logout');
-                $csrfToken = $tokenResponse->header('x-csrf-token');
-            }
+            $csrfToken = $this->getCsrfToken($cookie);
 
             if (! $csrfToken) {
                 Log::warning('Roblox refresh: csrf token not obtained');
@@ -34,28 +20,37 @@ class RobloxAuthService
                 return null;
             }
 
-            $ticketResponse = Http::withHeaders([
-                'x-csrf-token' => $csrfToken,
-                'Cookie' => ".ROBLOSECURITY={$cookieAfterHome}",
-                'Referer' => 'https://www.roblox.com/',
-                'User-Agent' => self::USER_AGENT,
-                'Content-Type' => 'application/x-www-form-urlencoded',
-            ])->post('https://auth.roblox.com/v1/authentication-ticket');
+            $ticket = null;
 
-            $ticket = $ticketResponse->header('rbx-authentication-ticket');
+            for ($i = 0; $i < 3; $i++) {
+                $ticketResponse = Http::withHeaders([
+                    'Cookie' => ".ROBLOSECURITY={$cookie}",
+                    'User-Agent' => self::USER_AGENT,
+                    'X-CSRF-TOKEN' => $csrfToken,
+                    'Content-Type' => 'application/json',
+                    'RBXauthenticationNegotiation' => '1',
+                    'Referer' => 'https://www.roblox.com/',
+                ])->post('https://auth.roblox.com/v1/authentication-ticket');
+
+                $ticket = $ticketResponse->header('rbx-authentication-ticket');
+
+                if ($ticket) {
+                    break;
+                }
+
+                sleep(1);
+            }
 
             if (! $ticket) {
-                Log::warning('Roblox refresh: authentication ticket not obtained', [
-                    'status' => $ticketResponse->status(),
-                ]);
+                Log::warning('Roblox refresh: authentication ticket not obtained');
 
                 return null;
             }
 
             $redeemResponse = Http::withHeaders([
-                'RBXauthenticationNegotiation' => '1',
+                'rbxauthenticationnegotiation' => '1',
                 'User-Agent' => self::USER_AGENT,
-            ])->asForm()->post('https://auth.roblox.com/v1/authentication-ticket/redeem', [
+            ])->post('https://auth.roblox.com/v1/authentication-ticket/redeem', [
                 'authenticationTicket' => $ticket,
             ]);
 
@@ -73,6 +68,16 @@ class RobloxAuthService
 
             return null;
         }
+    }
+
+    private function getCsrfToken(string $cookie): ?string
+    {
+        $response = Http::withHeaders([
+            'Cookie' => ".ROBLOSECURITY={$cookie}",
+            'User-Agent' => self::USER_AGENT,
+        ])->post('https://friends.roblox.com/v1/users/1/unfriend');
+
+        return $response->header('x-csrf-token');
     }
 
     private function extractRoblosecurity(?string $setCookieHeader): ?string
